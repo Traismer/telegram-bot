@@ -17,11 +17,12 @@ WORKDIR /app
 # Копируем файлы зависимостей
 COPY Pipfile Pipfile.lock ./
 
-# Устанавливаем зависимости
-RUN pipenv install --deploy --system
+# Устанавливаем зависимости для разработки
+RUN pipenv install --deploy --system --dev
 
-# Копируем исходный код и скрипт инициализации
+# Копируем исходный код, тесты и скрипт инициализации
 COPY src/ ./src/
+COPY tests/ ./tests/
 COPY init-db.sh .
 
 # Устанавливаем переменную PYTHONPATH

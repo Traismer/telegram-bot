@@ -1,11 +1,11 @@
 import os
 import logging
-from telegram import Update, ReplyKeyboardMarkup
+from telegram import Update, ReplyKeyboardMarkup, ReplyKeyboardRemove
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 from dotenv import load_dotenv
 from src.database import Base, engine, get_db
 from src.habr_parser import HabrParser
-from src.models.news import News
+from src.models import News
 from sqlalchemy.orm import Session
 
 # Настройка логирования

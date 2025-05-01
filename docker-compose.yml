@@ -26,7 +26,6 @@ services:
     build: .
     volumes:
       - .:/app
-      - /app/venv  # Исключаем виртуальное окружение из монтирования
     env_file:
       - .env
     restart: unless-stopped
