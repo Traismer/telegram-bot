@@ -10,5 +10,5 @@ class News(Base):
     link = Column(String)
     author = Column(String)
     views = Column(Integer)
-    image_url = Column(String)
+    image_url = Column(String, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now()) 

@@ -1,15 +1,5 @@
-from .shop import (
-    Base,
-    Service,
-    Order,
-    User,
-    Feedback
-)
+from .news import News
 
 __all__ = [
-    'Base',
-    'Service',
-    'Order',
-    'User',
-    'Feedback'
+    'News'
 ] 
