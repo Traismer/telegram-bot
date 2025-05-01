@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  # Сервис PostgreSQL
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: telegram_bot_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - bot-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d telegram_bot_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Сервис бота
+  bot:
+    build: .
+    volumes:
+      - .:/app
+      - /app/venv  # Исключаем виртуальное окружение из монтирования
+    env_file:
+      - .env
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/Moscow
+      - BOT_TOKEN=${BOT_TOKEN}
+      - ADMIN_ID=${ADMIN_ID}
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=telegram_bot_db
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: >
+      sh -c "
+        chmod +x /app/init-db.sh &&
+        /app/init-db.sh &&
+        python src/minimal_bot.py
+      "
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - bot-net
+
+# Сеть для взаимодействия сервисов
+networks:
+  bot-net:
+    driver: bridge
+
+# Том для хранения данных PostgreSQL
+volumes:
+  postgres_data:
